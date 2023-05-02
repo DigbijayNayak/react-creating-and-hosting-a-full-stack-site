@@ -22,6 +22,7 @@ React creating and hosting a full stack site
    - Creating a 404 page in React
 
 3. Creating a Node.js Back End
+
    - Why Node.js?
    - Setting up an Express server
    - Testing an Express server with Postman
@@ -29,3 +30,10 @@ React creating and hosting a full stack site
    - Upvoting articles
    - Automatically updating with nodemon
    - Adding comments
+
+4. Adding MongoDB to Node.js
+   - Why MongoDB?
+   - Downloading and installing MongoDB
+   - Adding MongoDB to Express
+   - Rewriting your upvote endpoint
+   - Rewriting your comments endpoint
