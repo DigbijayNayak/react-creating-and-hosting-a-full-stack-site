@@ -32,8 +32,18 @@ React creating and hosting a full stack site
    - Adding comments
 
 4. Adding MongoDB to Node.js
+
    - Why MongoDB?
    - Downloading and installing MongoDB
    - Adding MongoDB to Express
    - Rewriting your upvote endpoint
    - Rewriting your comments endpoint
+
+5. Connecting the Front End and Back End
+   - The Axios library
+   - Adding React hooks
+   - Calling useEffect at the right time
+   - Adding data loading to page components
+   - Displaying comments
+   - Creating an upvote button
+   - Creating an add comment form
