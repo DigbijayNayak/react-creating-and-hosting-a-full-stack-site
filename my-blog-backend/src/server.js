@@ -66,22 +66,39 @@ app.get("/api/articles/:name", async (req, res) => {
     res.sendStatus(404).send("Articles not found!");
   }
 });
+
+app.use(async (req, res, next) => {
+  if (req.user) {
+    next();
+  } else {
+    res.sendStatus(401);
+  }
+});
+
 app.put("/api/articles/:name/upvote", async (req, res) => {
   const { name } = req.params;
+  const { uid } = req.user;
   // const article = articlesInfo.find((a) => a.name === name);
 
-  await db.collection("articles").updateOne(
-    { name },
-    {
-      $inc: { upvotes: 1 },
-    }
-  );
   const article = await db.collection("articles").findOne({ name });
 
   if (article) {
+    const upvoteIds = article.upvoteIds || [];
+    const canUpvote = uid && !upvoteIds.include(uid);
+
+    if (canUpvote) {
+      await db.collection("articles").updateOne(
+        { name },
+        {
+          $inc: { upvotes: 1 },
+          $push: { upvoteIds: uid },
+        }
+      );
+    }
+    const updatedArticle = await db.collection("articles").findOne({ name });
     // article.upvotes += 1;
     // res.send(`The ${name} article now has ${article.upvotes} upvotes!!!`);
-    res.json(article);
+    res.json(updatedArticle);
   } else {
     res.send("The article doesn't exist");
   }
@@ -89,13 +106,15 @@ app.put("/api/articles/:name/upvote", async (req, res) => {
 
 app.post("/api/articles/:name/comments", async (req, res) => {
   const { name } = req.params;
-  const { postedBy, text } = req.body;
+  const { text } = req.body;
+  const { email } = req.user;
+
   // const article = articlesInfo.find((a) => a.name === name);
 
   await db.collection("articles").updateOne(
     { name },
     {
-      $push: { comments: { postedBy, text } },
+      $push: { comments: { postedBy: email, text } },
     }
   );
 
