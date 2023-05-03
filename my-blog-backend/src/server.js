@@ -2,31 +2,45 @@ import fs from "fs";
 import admin from "firebase-admin";
 import express from "express";
 import { db, connectToDb } from "./db.js";
-let articlesInfo = [
-  {
-    name: "learn-react",
-    upvotes: 0,
-    comments: [],
-  },
-  {
-    name: "learn-node",
-    upvotes: 0,
-    comments: [],
-  },
-  {
-    name: "mongodb",
-    upvotes: 0,
-    comments: [],
-  },
-];
+// let articlesInfo = [
+//   {
+//     name: "learn-react",
+//     upvotes: 0,
+//     comments: [],
+//   },
+//   {
+//     name: "learn-node",
+//     upvotes: 0,
+//     comments: [],
+//   },
+//   {
+//     name: "mongodb",
+//     upvotes: 0,
+//     comments: [],
+//   },
+// ];
 
-const credential = JSON.parse(fs.readFileSync("../credentials.json"));
+const credential = JSON.parse(fs.readFileSync("./credentials.json"));
 admin.initializeApp({
   credential: admin.credential.cert(credential),
 });
 
 const app = express();
 app.use(express.json());
+
+app.use(async (req, res, next) => {
+  const { authtoken } = req.headers;
+
+  if (authtoken) {
+    try {
+      req.user = await admin.auth().verifyIdToken(authtoken);
+    } catch (e) {
+      res.sendStatus(400);
+    }
+  }
+
+  next();
+});
 
 app.post("/hello", (req, res) => {
   console.log(req.body);
@@ -40,10 +54,13 @@ app.get("/hello/:name", (req, res) => {
 
 app.get("/api/articles/:name", async (req, res) => {
   const { name } = req.params;
+  const { uid } = req.user;
 
   const article = await db.collection("articles").findOne({ name });
 
   if (article) {
+    const upvoteIds = article.upvoteIds || [];
+    article.canUpvote = uid && !upvoteIds.include(uid);
     res.json(article);
   } else {
     res.sendStatus(404).send("Articles not found!");
