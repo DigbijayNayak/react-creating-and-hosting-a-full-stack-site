@@ -1,3 +1,5 @@
+import fs from "fs";
+import admin from "firebase-admin";
 import express from "express";
 import { db, connectToDb } from "./db.js";
 let articlesInfo = [
@@ -17,6 +19,12 @@ let articlesInfo = [
     comments: [],
   },
 ];
+
+const credential = JSON.parse(fs.readFileSync("../credentials.json"));
+admin.initializeApp({
+  credential: admin.credential.cert(credential),
+});
+
 const app = express();
 app.use(express.json());
 
@@ -55,7 +63,8 @@ app.put("/api/articles/:name/upvote", async (req, res) => {
 
   if (article) {
     // article.upvotes += 1;
-    res.send(`The ${name} article now has ${article.upvotes} upvotes!!!`);
+    // res.send(`The ${name} article now has ${article.upvotes} upvotes!!!`);
+    res.json(article);
   } else {
     res.send("The article doesn't exist");
   }
@@ -77,7 +86,8 @@ app.post("/api/articles/:name/comments", async (req, res) => {
 
   if (article) {
     // article.comments.push({ postedBy, text });
-    res.send(article.comments);
+    // res.send(article.comments);
+    res.json(article);
   } else {
     res.send("The article doesn't exist");
   }
