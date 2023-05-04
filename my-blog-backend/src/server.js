@@ -2,6 +2,7 @@ import fs from "fs";
 import path from 'path';
 import admin from "firebase-admin";
 import express from "express";
+import 'dotenv/config.js';
 import { db, connectToDb } from "./db.js";
 
 import { fileURLToPath } from "url";

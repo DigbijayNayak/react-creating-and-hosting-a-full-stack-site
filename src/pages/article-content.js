@@ -276,7 +276,7 @@ const articles = [
           <>
             To update a document in a collection, use the <i>updateOne()</i> or
             <i>updateMany()</i> method:
-            <pre>
+            <pre className="code-snippet">
               <code>
                 <b>
                   {`db.mycollection.updateOne({ name: 'John' }, { $set: { age: 35 } })`}
@@ -294,7 +294,7 @@ const articles = [
           <>
             To delete a document from a collection, use the <i>deleteOne()</i>
             or <i>deleteMany()</i> method:
-            <pre>
+            <pre className="code-snippet">
               <code>
                 <b>{`db.mycollection.deleteOne({ name: 'John' })`}</b>
               </code>
